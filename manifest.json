@@ -1,0 +1,16 @@
+{
+  "name": "WinScript Builder",
+  "short_name": "WinScript",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e1e1e",
+  "theme_color": "#1e1e1e",
+  "icons": [
+    {
+      "src": "https://fonts.gstatic.com/s/i/materialiconsrounded/terminal/v14/24px.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

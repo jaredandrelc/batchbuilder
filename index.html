@@ -1,51 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Batch Builder</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23007AFF'%3E%3Cpath d='M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm160-120h320v-80H320v80Zm-80-160 160-160-160-160-56 56 104 104-104 104 56 56ZM160-240v-480 480Z'/%3E%3C/svg%3E">
+    <title>WinScript Builder</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23007AFF'%3E%3Cpath d='M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm160-120h320v-80H320v80Zm-80-160 160-160-160-160-56 56 104 104-104 104 56 56ZM160-240v-480 480Z'/%3E%3C/svg%3E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
     <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e1e1e">
 </head>
+
 <body>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay">
+        <div class="loader-content">
+            <span class="material-symbols-rounded loader-icon">terminal</span>
+            <div class="apple-spinner"></div>
+            <div class="loader-text">WinScript Builder</div>
+        </div>
+    </div>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="navbar-brand" onclick="openModal('aboutModal')">
-            <span class="material-symbols-rounded" style="font-size: 26px;">terminal</span>
-            Batch Builder
+        <div class="navbar-mode-switch">
+            <div class="navbar-mode-item active" id="nav-btn-Batch" onclick="switchEngine('Batch')">
+                <span class="material-symbols-rounded">terminal</span>
+                Batch
+            </div>
+            <div class="navbar-mode-item" id="nav-btn-PowerShell" onclick="switchEngine('PowerShell')">
+                <span class="material-symbols-rounded">code</span>
+                PowerShell
+            </div>
         </div>
-        
+
+        <!-- Education Toolbar (Teacher) -->
+        <div id="edu-toolbar-teacher" class="edu-toolbar" style="display: none;">
+            <div class="edu-badge">
+                <span class="material-symbols-rounded">school</span>
+                <span>Teacher</span>
+            </div>
+            <div class="edu-separator"></div>
+            <button class="edu-action-btn" onclick="setupClasswork()" title="Setup Classwork">
+                <span class="material-symbols-rounded">assignment_add</span>
+                <span class="btn-text">Classwork</span>
+            </button>
+            <button class="edu-action-btn" onclick="toggleTeachingMode()" title="Teaching Mode">
+                <span class="material-symbols-rounded">cast_for_education</span>
+                <span class="btn-text">Teach</span>
+            </button>
+        </div>
+
+        <!-- Education Toolbar (Student) -->
+        <div id="edu-toolbar-student" class="edu-toolbar" style="display: none;">
+            <div class="edu-badge">
+                <span class="material-symbols-rounded">school</span>
+                <span>Student</span>
+            </div>
+            <div class="edu-separator"></div>
+            <button class="edu-action-btn" onclick="loadClasswork()" title="Load Classwork">
+                <span class="material-symbols-rounded">assignment_returned</span>
+                <span class="btn-text">Load Classwork</span>
+            </button>
+        </div>
+
         <div class="nav-controls">
             <div class="btn-group-pill">
-                <button class="btn-action secondary" onclick="document.getElementById('fileInput').click()" aria-label="Open File">
-                    <span class="material-symbols-rounded" style="font-size: 18px; margin-right: 6px;">folder_open</span> <span class="btn-text">Open</span>
+                <button class="btn-action secondary" onclick="document.getElementById('fileInput').click()"
+                    aria-label="Open File">
+                    <span class="material-symbols-rounded" style="font-size: 20px; margin-right: 6px;">folder</span>
+                    <span class="btn-text">Open</span>
                 </button>
                 <div class="pill-divider"></div>
                 <button class="btn-action secondary" onclick="saveDraft()" aria-label="Save Draft">
-                    <span class="material-symbols-rounded" style="font-size: 18px; margin-right: 6px;">save</span> <span class="btn-text">Save</span>
+                    <span class="material-symbols-rounded" style="font-size: 20px; margin-right: 6px;">save</span> <span
+                        class="btn-text">Save</span>
                 </button>
             </div>
-            <input type="file" id="fileInput" accept=".dbat,.bat,.cmd,.txt" style="display: none" onchange="loadFile(this)">
+            <input type="file" id="fileInput" accept=".dbat,.bat,.cmd,.txt,.ps1" style="display: none"
+                onchange="loadFile(this)">
 
             <!-- Rounded Settings Button -->
-            <button class="btn-icon" style="border-radius: 50%; width: 40px; height: 40px;" onclick="openModal('settingsModal')" aria-label="Settings">
-                <span class="material-symbols-rounded">settings</span>
-            </button>
+            <div class="btn-group-pill">
+                <button class="btn-action secondary" onclick="openSettingsTo('main')" aria-label="Settings">
+                    <span class="material-symbols-rounded" style="font-size: 20px;">settings</span>
+                </button>
+            </div>
 
-            <button class="btn-action secondary" onclick="copyToClipboard()" aria-label="Copy to Clipboard">
-                <span class="material-symbols-rounded">content_copy</span> <span class="btn-text">Copy</span>
-            </button>
-            <button class="btn-action" onclick="exportBatch()" aria-label="Export to BAT">
-                <span class="material-symbols-rounded">download</span> <span class="btn-text">Export .BAT</span>
-            </button>
+            <div class="btn-group-pill">
+                <button class="btn-action secondary" onclick="copyToClipboard()" aria-label="Copy to Clipboard">
+                    <span class="material-symbols-rounded"
+                        style="font-size: 20px; margin-right: 6px;">content_copy</span> <span
+                        class="btn-text">Copy</span>
+                </button>
+                <div class="pill-divider"></div>
+                <button class="btn-action secondary" onclick="exportScript()" aria-label="Export">
+                    <span class="material-symbols-rounded" style="font-size: 20px; margin-right: 6px;">ios_share</span>
+                    <span class="btn-text">Export .BAT</span>
+                </button>
+            </div>
         </div>
-        
+
         <button class="navbar-toggler" onclick="toggleMobileMenu()" aria-label="Menu">
             <span class="material-symbols-rounded">menu</span>
         </button>
@@ -60,26 +125,33 @@
                 <div class="segment-tab" onclick="switchTab('presets')" id="tabBtn-presets">Presets</div>
             </div>
 
-            <input type="text" class="search-box" placeholder="Search commands..." id="searchInput" onkeyup="filterCommands()" aria-label="Search">
-            
+            <input type="text" class="search-box" placeholder="Search commands..." id="searchInput"
+                onkeyup="filterCommands()" aria-label="Search">
+
             <!-- Sub Sidebar (Icons) -->
             <div class="sub-sidebar">
-                <div class="context-icon" id="ctx-all" onclick="switchContext('All')" title="All Commands" aria-label="All Commands">
+                <div class="context-icon" id="ctx-all" onclick="switchContext('All')" title="All Commands"
+                    aria-label="All Commands">
                     <span class="material-symbols-rounded">apps</span>
                 </div>
-                <div class="context-icon active" id="ctx-batch" onclick="switchContext('Batch')" title="Batch Commands" aria-label="Batch Commands">
+                <div class="context-icon active" id="ctx-batch" onclick="switchContext('Batch')" title="Batch Commands"
+                    aria-label="Batch Commands">
                     <span class="material-symbols-rounded">terminal</span>
                 </div>
-                <div class="context-icon" id="ctx-python" onclick="switchContext('Python')" title="Python Commands" aria-label="Python Commands">
+                <div class="context-icon" id="ctx-python" onclick="switchContext('Python')" title="Python Commands"
+                    aria-label="Python Commands">
                     <span class="material-symbols-rounded">code</span>
                 </div>
-                <div class="context-icon" id="ctx-java" onclick="switchContext('Java')" title="Java Commands" aria-label="Java Commands">
+                <div class="context-icon" id="ctx-java" onclick="switchContext('Java')" title="Java Commands"
+                    aria-label="Java Commands">
                     <span class="material-symbols-rounded">coffee</span>
                 </div>
-                <div class="context-icon" id="ctx-git" onclick="switchContext('Git')" title="Git Commands" aria-label="Git Commands">
+                <div class="context-icon" id="ctx-git" onclick="switchContext('Git')" title="Git Commands"
+                    aria-label="Git Commands">
                     <span class="material-symbols-rounded">call_merge</span>
                 </div>
-                <div class="context-icon" id="ctx-archive" onclick="switchContext('Archive')" title="Archive Commands" aria-label="Archive Commands">
+                <div class="context-icon" id="ctx-archive" onclick="switchContext('Archive')" title="Archive Commands"
+                    aria-label="Archive Commands">
                     <span class="material-symbols-rounded">archive</span>
                 </div>
             </div>
@@ -91,10 +163,14 @@
                     <div id="commandList"></div>
                 </div>
                 <div id="tab-presets" class="tab-pane">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">My Presets</div>
+                    <div
+                        style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">
+                        My Presets</div>
                     <div id="customPresetList"></div>
                     <hr style="border-color: var(--border-color); margin: 15px 0;">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">Templates</div>
+                    <div
+                        style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">
+                        Templates</div>
                     <div id="presetList"></div>
                 </div>
             </div>
@@ -106,41 +182,55 @@
                 <div class="ribbon-group">
                     <!-- Undo/Redo Joined Pill -->
                     <div class="ribbon-pill-group">
-                        <button class="ribbon-pill-btn" onclick="undo()" id="btnUndo" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+                        <button class="ribbon-pill-btn" onclick="undo()" id="btnUndo" disabled title="Undo (Ctrl+Z)"
+                            aria-label="Undo">
                             <span class="material-symbols-rounded" style="font-size: 20px;">undo</span>
                         </button>
                         <div class="pill-divider"></div>
-                        <button class="ribbon-pill-btn" onclick="redo()" id="btnRedo" disabled title="Redo (Ctrl+Y)" aria-label="Redo">
+                        <button class="ribbon-pill-btn" onclick="redo()" id="btnRedo" disabled title="Redo (Ctrl+Y)"
+                            aria-label="Redo">
                             <span class="material-symbols-rounded" style="font-size: 20px;">redo</span>
                         </button>
                     </div>
 
-                    <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
-                    
+                    <div
+                        style="width: 1px; height: 16px; background: var(--border-color); margin: 0 8px; opacity: 0.5;">
+                    </div>
+
                     <!-- Clear with Popover -->
-                    <button class="ribbon-btn" id="btnClear" onclick="toggleClearPopover(event)" aria-label="Clear Canvas">
-                        <span class="material-symbols-rounded" style="font-size: 18px;">delete</span> <span class="btn-text">Clear</span>
+                    <button class="ribbon-btn" id="btnClear" onclick="toggleClearPopover(event)"
+                        aria-label="Clear Canvas">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">delete</span> <span
+                            class="btn-text">Clear</span>
                     </button>
                 </div>
 
                 <div class="ribbon-group">
-                    <button class="ribbon-btn" style="color:var(--text-secondary); font-size:0.8rem; display:flex; gap:6px; align-items:center; background:none; border:none; cursor:pointer;" onclick="openSavePresetModal()" aria-label="Save as Preset">
-                        <span class="material-symbols-rounded" style="font-size: 18px;">bookmark_add</span> <span class="btn-text">Save as Preset</span>
+                    <button class="ribbon-btn" onclick="openSavePresetModal()" aria-label="Save as Preset">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">bookmark_add</span> <span
+                            class="btn-text">Save as Preset</span>
                     </button>
-                    <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
-                    
+                    <div
+                        style="width: 1px; height: 16px; background: var(--border-color); margin: 0 8px; opacity: 0.5;">
+                    </div>
+
                     <!-- Overview Button (Visible only in Block view) -->
-                    <button class="ribbon-btn" id="btnOverview" style="color:var(--text-secondary); font-size:0.8rem; display:flex; gap:6px; align-items:center; background:none; border:none; cursor:pointer;" onclick="toggleOverview()" aria-label="Toggle Overview Mode">
-                        <span class="material-symbols-rounded" style="font-size: 18px;">compress</span> <span class="btn-text">Overview</span>
+                    <button class="ribbon-btn" id="btnOverview" onclick="toggleOverview()"
+                        aria-label="Toggle Overview Mode">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">grid_view</span> <span
+                            class="btn-text">Overview</span>
                     </button>
 
                     <!-- View Toggle -->
                     <div class="view-toggle">
-                        <div class="view-option active" id="view-block" onclick="toggleView('block')" aria-label="Block View">
-                            <span class="material-symbols-rounded" style="font-size: 16px;">view_agenda</span> <span class="btn-text">Blocks</span>
+                        <div class="view-option active" id="view-block" onclick="toggleView('block')"
+                            aria-label="Block View">
+                            <span class="material-symbols-rounded" style="font-size: 16px;">view_agenda</span> <span
+                                class="btn-text">Blocks</span>
                         </div>
                         <div class="view-option" id="view-code" onclick="toggleView('code')" aria-label="Code View">
-                            <span class="material-symbols-rounded" style="font-size: 16px;">code</span> <span class="btn-text">Script</span>
+                            <span class="material-symbols-rounded" style="font-size: 16px;">description</span> <span
+                                class="btn-text">Script</span>
                         </div>
                     </div>
                 </div>
@@ -153,9 +243,9 @@
             <div class="canvas-scroller" id="blockViewContainer">
                 <div class="drop-zone" id="dropZone">
                     <div style="text-align: center; margin-top: 20vh;" id="emptyState">
-                        <span class="material-symbols-rounded" style="font-size: 64px; color: var(--border-color);">drag_indicator</span>
+                        <span class="material-symbols-rounded"
+                            style="font-size: 64px; color: var(--border-color);">drag_indicator</span>
                         <p class="mt-3" style="color: var(--text-secondary);">Start Building</p>
-                        <button class="btn-secondary-action" style="margin: 12px auto;" onclick="loadExample()">Load Basic Example</button>
                     </div>
                 </div>
             </div>
@@ -166,8 +256,10 @@
             </div>
 
             <!-- Floating Help Button -->
-            <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands" target="_blank" class="fab-help" title="Microsoft Learn: Batch" aria-label="Help">
+            <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands"
+                target="_blank" class="fab-help" id="helpFab" title="Microsoft Learn" aria-label="Help">
                 <span class="material-symbols-rounded">question_mark</span>
+                <span class="fab-text">View Batch Docs</span>
             </a>
         </div>
     </div>
@@ -177,9 +269,11 @@
         <div class="modal-box large">
             <div class="modal-header">
                 <div class="modal-title">Edit Python Script</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('scriptEditorModal')">close</span>
+                <span class="material-symbols-rounded close-modal" style="cursor:pointer;"
+                    onclick="closeModal('scriptEditorModal')">close</span>
             </div>
-            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Content will be generated into the file specified in the block.</p>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Content will be generated
+                into the file specified in the block.</p>
             <textarea id="scriptContentArea" class="script-editor-area" placeholder="print('Hello World')"></textarea>
             <div class="modal-footer">
                 <button class="btn-secondary-action" onclick="closeModal('scriptEditorModal')">Cancel</button>
@@ -193,12 +287,15 @@
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title">Rename Preset</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('renameModal')">close</span>
+                <span class="material-symbols-rounded close-modal" style="cursor:pointer;"
+                    onclick="closeModal('renameModal')">close</span>
             </div>
             <div style="margin-bottom:16px;">
                 <label class="form-label">Name</label>
-                <input type="text" id="renameInput" class="form-control" placeholder="New name..." oninput="this.classList.remove('invalid')">
-                <div class="validation-msg"><span class="material-symbols-rounded" style="font-size:12px">error</span> Name is required</div>
+                <input type="text" id="renameInput" class="form-control" placeholder="New name..."
+                    oninput="this.classList.remove('invalid')">
+                <div class="validation-msg"><span class="material-symbols-rounded" style="font-size:12px">error</span>
+                    Name is required</div>
             </div>
             <label class="form-label">Change Icon</label>
             <div class="icon-grid" id="renameIconGrid">
@@ -216,12 +313,15 @@
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title">Save as Preset</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('savePresetModal')">close</span>
+                <span class="material-symbols-rounded close-modal" style="cursor:pointer;"
+                    onclick="closeModal('savePresetModal')">close</span>
             </div>
             <div style="margin-bottom:16px;">
                 <label class="form-label">Preset Name</label>
-                <input type="text" id="presetNameInput" class="form-control" placeholder="My Awesome Script" oninput="this.classList.remove('invalid')">
-                <div class="validation-msg"><span class="material-symbols-rounded" style="font-size:12px">error</span> Name is required</div>
+                <input type="text" id="presetNameInput" class="form-control" placeholder="My Awesome Script"
+                    oninput="this.classList.remove('invalid')">
+                <div class="validation-msg"><span class="material-symbols-rounded" style="font-size:12px">error</span>
+                    Name is required</div>
             </div>
             <label class="form-label">Select Icon</label>
             <div class="icon-grid" id="presetIconGrid">
@@ -236,50 +336,702 @@
 
     <!-- Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
-        <div class="modal-box">
-            <div class="modal-header" style="display:flex; justify-content:space-between;">
-                <div class="modal-title">Settings</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('settingsModal')">close</span>
-            </div>
-            
-            <div class="settings-category">Appearance</div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Theme</div>
-                    <div class="setting-desc">Select your preferred appearance</div>
+        <div class="modal-box settings-modal-box">
+            <div class="modal-header settings-header">
+                <div style="justify-self: start;">
+                    <button class="settings-back-btn" id="settingsBackBtn" onclick="settingsGoBack()">
+                        <span class="material-symbols-rounded">arrow_back_ios</span> <span
+                            id="settingsBackText">Settings</span>
+                    </button>
                 </div>
-                <select class="form-select" style="width: 120px;" id="themeSelect" onchange="changeTheme(this.value)">
-                    <option value="system">System</option>
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                </select>
+                <div class="modal-title settings-title-wrapper">
+                    <div id="settingsTitle" class="settings-title-text">Settings</div>
+                </div>
+                <div style="justify-self: end;">
+                    <button class="close-btn-circle" onclick="closeModal('settingsModal')"><span
+                            class="material-symbols-rounded" style="font-size: 20px;">close</span></button>
+                </div>
             </div>
 
-            <div class="settings-category">Config</div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Compact Sidebar</div>
-                    <div class="setting-desc">Smaller icons in the command list</div>
+            <div class="settings-stack-container">
+                <!-- MAIN VIEW -->
+                <div id="settings-main-view" class="settings-view active" data-title="Settings">
+                    <div class="settings-scroll-content">
+                        <div class="settings-category">General</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable" onclick="settingsNavigate('appearance')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #007AFF;"><span
+                                            class="material-symbols-rounded">palette</span></div>
+                                    <div class="setting-label">Appearance</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('preferences')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #FF9500;"><span
+                                            class="material-symbols-rounded">tune</span></div>
+                                    <div class="setting-label">Preferences</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('files')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #8E8E93;"><span
+                                            class="material-symbols-rounded">save</span></div>
+                                    <div class="setting-label">Files & Export</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('performance')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #FF2D55;"><span
+                                            class="material-symbols-rounded">speed</span></div>
+                                    <div class="setting-label">Performance</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-category">Engines</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable" onclick="settingsNavigate('batch')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #4D4D4D;"><span
+                                            class="material-symbols-rounded">terminal</span></div>
+                                    <div class="setting-label">Batch Settings</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('powershell')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #012456;"><span
+                                            class="material-symbols-rounded">code</span></div>
+                                    <div class="setting-label">PowerShell Settings</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-category">Tools</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable" onclick="settingsNavigate('education')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #FF9F0A;"><span
+                                            class="material-symbols-rounded">school</span></div>
+                                    <div class="setting-label">Education Mode</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('shortcuts')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #5856D6;"><span
+                                            class="material-symbols-rounded">keyboard</span></div>
+                                    <div class="setting-label">Keyboard Shortcuts</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-category">Information</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable" id="pwaInstallBtn" onclick="installPWA()"
+                                style="display: none;">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #30B0C7;"><span
+                                            class="material-symbols-rounded">arrow_circle_down</span></div>
+                                    <div class="setting-label">Install App</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('about')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #8E8E93;"><span
+                                            class="material-symbols-rounded">info</span></div>
+                                    <div class="setting-label">About App</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                            <div class="setting-item clickable" onclick="settingsNavigate('privacy')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #32ADE6;"><span
+                                            class="material-symbols-rounded">lock</span></div>
+                                    <div class="setting-label">Privacy Policy</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">chevron_right</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="sidebarCompactToggle" onchange="toggleSidebarCompact()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <div>
-                    <div class="setting-label">Show Welcome Screen</div>
-                    <div class="setting-desc">Show the welcome popup on every startup</div>
+
+                <!-- EDUCATION VIEW -->
+                <div id="settings-education-view" class="settings-view" data-title="Education">
+                    <div class="settings-scroll-content">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; margin-top: 16px;">
+                            <span class="material-symbols-rounded"
+                                style="font-size: 64px; color: #FF9F0A; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">school</span>
+                            <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">Education Mode</h2>
+                            <p
+                                style="font-size: 0.95rem; color: var(--text-secondary); max-width: 80%; margin: 0; line-height: 1.5;">
+                                Tools designed for classroom environments.</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #FF9F0A;"><span
+                                            class="material-symbols-rounded">school</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Education Features</div>
+                                        <div class="setting-desc">Enable classroom specific tools</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="eduFeaturesToggle" onchange="toggleEduFeatures()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="eduSettingsContainer">
+                            <div class="settings-group-header">Client Configuration</div>
+                            <div class="settings-group">
+                                <div class="setting-item">
+                                    <div class="setting-label">Client Mode</div>
+                                    <div class="segmented-control-small" id="eduClientModeControl">
+                                        <div class="seg-item selected" onclick="setEduMode('student')"
+                                            id="eduMode-student">Student</div>
+                                        <div class="seg-item" onclick="setEduMode('teacher')" id="eduMode-teacher">
+                                            Teacher</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="edu-student-section">
+                                <div class="settings-group-header">Student Features</div>
+                                <div class="settings-group">
+                                    <div class="setting-item">
+                                        <div class="setting-left">
+                                            <div class="setting-icon" style="background: #30B0C7;"><span
+                                                    class="material-symbols-rounded">menu_book</span></div>
+                                            <div class="setting-content">
+                                                <div class="setting-label">Learning Tools</div>
+                                                <div class="setting-desc">Interactive guides and hints</div>
+                                            </div>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="eduToolsStudentToggle"
+                                                onchange="toggleEduTool('student')">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="edu-teacher-section" style="display: none;">
+                                <div class="settings-group-header">Teacher Features</div>
+                                <div class="settings-group">
+                                    <div class="setting-item">
+                                        <div class="setting-left">
+                                            <div class="setting-icon" style="background: #FF375F;"><span
+                                                    class="material-symbols-rounded">cast_for_education</span></div>
+                                            <div class="setting-content">
+                                                <div class="setting-label">Teaching Tools</div>
+                                                <div class="setting-desc">Presentation mode and annotations</div>
+                                            </div>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-left">
+                                            <div class="setting-icon" style="background: #BF5AF2;"><span
+                                                    class="material-symbols-rounded">ios_share</span></div>
+                                            <div class="setting-content">
+                                                <div class="setting-label">Classwork Export Format</div>
+                                            </div>
+                                        </div>
+                                        <div class="custom-select" style="min-width: 140px;">
+                                            <div class="select-value" onclick="toggleSettingsDropdown(this)">
+                                                <span class="current-val">Encrypted</span>
+                                            </div>
+                                            <div class="select-dropdown">
+                                                <div class="select-option selected"
+                                                    onclick="selectSettingsOption(this)">Encrypted</div>
+                                                <div class="select-option" onclick="selectSettingsOption(this)">Unlocked
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="welcomeToggle" onchange="toggleWelcomeEveryTime()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <p style="color:var(--text-secondary); font-size: 0.85rem; margin-top: 20px;">All command suites (Git, Python, SysAdmin) are enabled.</p>
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px;">
-                <button class="btn-secondary-action" style="flex: 1; justify-content: center;" onclick="openModal('aboutModal')">About App</button>
-                <button class="btn-secondary-action" style="flex: 1; justify-content: center;" onclick="openModal('privacyModal')">Privacy Policy</button>
+
+                <!-- FILES & EXPORT VIEW -->
+                <div id="settings-files-view" class="settings-view" data-title="Files & Export">
+                    <div class="settings-scroll-content">
+                        <div class="settings-group-header">Export Settings</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #32ADE6;"><span
+                                            class="material-symbols-rounded">branding_watermark</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Include Branding</div>
+                                        <div class="setting-desc">Add "Generated by WinScript Builder" header</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="exportBrandingToggle" onchange="toggleExportBranding()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HOME VIEW (Desktop Default) -->
+                <div id="settings-home-view" class="settings-view" data-title="Settings">
+                    <div class="settings-scroll-content" style="padding: 40px 48px;">
+                        <div style="margin-bottom: 40px;">
+                            <h2
+                                style="font-weight: 700; font-size: 2.5rem; margin: 0 0 8px 0; letter-spacing: -0.02em;">
+                                Settings</h2>
+                            <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0;">
+                                Manage your workspace, configure engines, and customize your experience.
+                            </p>
+                        </div>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; width: 100%;">
+                            <div class="setting-home-card" onclick="settingsNavigate('appearance')">
+                                <span class="material-symbols-rounded"
+                                    style="color: #007AFF; font-size: 32px; margin-bottom: 16px;">palette</span>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 6px;">Appearance</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;">
+                                    Customize themes, icons, and layout density.</div>
+                            </div>
+                            <div class="setting-home-card" onclick="settingsNavigate('performance')">
+                                <span class="material-symbols-rounded"
+                                    style="color: #FF2D55; font-size: 32px; margin-bottom: 16px;">speed</span>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 6px;">Performance</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;">Optimize
+                                    animations and reduce resource usage.</div>
+                            </div>
+                            <div class="setting-home-card" onclick="settingsNavigate('batch')">
+                                <span class="material-symbols-rounded"
+                                    style="color: #34C759; font-size: 32px; margin-bottom: 16px;">terminal</span>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 6px;">Engines</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;">
+                                    Configure Batch & PowerShell linter and completion.</div>
+                            </div>
+                            <div class="setting-home-card" onclick="settingsNavigate('shortcuts')">
+                                <span class="material-symbols-rounded"
+                                    style="color: #5856D6; font-size: 32px; margin-bottom: 16px;">keyboard</span>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 6px;">Shortcuts</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4;">View
+                                    keyboard shortcuts for quick actions.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- APPEARANCE VIEW -->
+                <div id="settings-appearance-view" class="settings-view" data-title="Appearance">
+                    <div class="settings-scroll-content">
+
+                        <div class="settings-group-header">App Theme</div>
+                        <div class="theme-visual-selector">
+                            <div class="theme-option" onclick="setTheme('light')" id="themeOpt-light">
+                                <div class="theme-preview light">
+                                    <div class="tp-header"></div>
+                                    <div class="tp-body">
+                                        <div class="tp-line"></div>
+                                        <div class="tp-line short"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-label">Light</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('dark')" id="themeOpt-dark">
+                                <div class="theme-preview dark">
+                                    <div class="tp-header"></div>
+                                    <div class="tp-body">
+                                        <div class="tp-line"></div>
+                                        <div class="tp-line short"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-label">Dark</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('system')" id="themeOpt-system">
+                                <div class="theme-preview system">
+                                    <div class="tp-split">
+                                        <div class="tp-l"></div>
+                                        <div class="tp-d"></div>
+                                    </div>
+                                    <div class="tp-text">Auto</div>
+                                </div>
+                                <div class="theme-label">System</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Script Editor Theme</div>
+                        <div class="settings-group">
+                            <div class="editor-theme-scroll" id="editorThemeList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Iconography</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">Style</div>
+                                <div class="segmented-control-small" id="iconStyleControl"></div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Size</div>
+                                <div class="segmented-control-small" id="iconSizeControl"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PREFERENCES VIEW -->
+                <div id="settings-preferences-view" class="settings-view" data-title="Preferences">
+                    <div class="settings-scroll-content">
+
+                        <div class="settings-group-header">Sidebar Layout</div>
+                        <div class="theme-visual-selector">
+                            <div class="theme-option" onclick="setSidebarMode('normal')" id="sidebarOpt-normal">
+                                <div class="sidebar-preview normal">
+                                    <div class="sp-sidebar">
+                                        <div class="sp-icon"></div>
+                                        <div class="sp-icon"></div>
+                                        <div class="sp-icon"></div>
+                                    </div>
+                                    <div class="sp-content"></div>
+                                </div>
+                                <div class="theme-label">Normal</div>
+                            </div>
+                            <div class="theme-option" onclick="setSidebarMode('compact')" id="sidebarOpt-compact">
+                                <div class="sidebar-preview compact">
+                                    <div class="sp-sidebar">
+                                        <div class="sp-line"></div>
+                                        <div class="sp-line"></div>
+                                        <div class="sp-line"></div>
+                                    </div>
+                                    <div class="sp-content"></div>
+                                </div>
+                                <div class="theme-label">Compact</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Tooltips</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #34C759;"><span
+                                            class="material-symbols-rounded">tooltip</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Show Tooltips</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="sidebarTooltipToggle" onchange="toggleSidebarTooltip()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Detail Level</div>
+                                <div class="segmented-control-small" id="tooltipDetailControl"></div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Onboarding</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #FF9500;"><span
+                                            class="material-symbols-rounded">waving_hand</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Show Welcome Screen</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="welcomeToggle" onchange="toggleWelcomeEveryTime()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Editor</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #5856D6;"><span
+                                            class="material-symbols-rounded">article</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Completion Descriptions</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="completionDescToggle" onchange="toggleCompletionDesc()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BATCH SETTINGS VIEW -->
+                <div id="settings-batch-view" class="settings-view" data-title="Batch Settings">
+                    <div class="settings-scroll-content">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; margin-top: 16px;">
+                            <span class="material-symbols-rounded"
+                                style="font-size: 64px; color: #8E8E93; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">terminal</span>
+                            <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">Batch Engine</h2>
+                            <p
+                                style="font-size: 0.95rem; color: var(--text-secondary); max-width: 80%; margin: 0; line-height: 1.5;">
+                                Configure the classic Windows command interpreter environment.</p>
+                        </div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #34C759;"><span
+                                            class="material-symbols-rounded">verified</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Enable Linter</div>
+                                        <div class="setting-desc">Real-time syntax and variable checking</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="eduToolsTeacherToggle"
+                                        onchange="toggleEduTool('teacher')">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #34C759;"><span
+                                            class="material-symbols-rounded">code</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Script Completion</div>
+                                        <div class="setting-desc">Suggest commands and variables while typing</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="batchCompletionToggle"
+                                        onchange="toggleEngineCompletion('Batch')">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Resources</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable"
+                                onclick="window.open('https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands', '_blank')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #0078D4;"><span
+                                            class="material-symbols-rounded">book</span></div>
+                                    <div class="setting-label">Official Documentation</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">open_in_new</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POWERSHELL SETTINGS VIEW -->
+                <div id="settings-powershell-view" class="settings-view" data-title="PowerShell Settings">
+                    <div class="settings-scroll-content">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; margin-top: 16px;">
+                            <span class="material-symbols-rounded"
+                                style="font-size: 64px; color: #0078D4; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">code</span>
+                            <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">PowerShell Engine</h2>
+                            <p
+                                style="font-size: 0.95rem; color: var(--text-secondary); max-width: 80%; margin: 0; line-height: 1.5;">
+                                Configure the modern cross-platform task automation solution.</p>
+                        </div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #34C759;"><span
+                                            class="material-symbols-rounded">verified</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Enable Linter</div>
+                                        <div class="setting-desc">Real-time syntax and variable checking</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="pshLinterToggle"
+                                        onchange="toggleEngineLinter('PowerShell')">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #34C759;"><span
+                                            class="material-symbols-rounded">code</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">Script Completion</div>
+                                        <div class="setting-desc">Suggest commands and variables while typing</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="pshCompletionToggle"
+                                        onchange="toggleEngineCompletion('PowerShell')">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-group-header">Resources</div>
+                        <div class="settings-group">
+                            <div class="setting-item clickable"
+                                onclick="window.open('https://learn.microsoft.com/en-us/powershell/', '_blank')">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #0078D4;"><span
+                                            class="material-symbols-rounded">book</span></div>
+                                    <div class="setting-label">Official Documentation</div>
+                                </div>
+                                <span class="material-symbols-rounded setting-chevron">open_in_new</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHORTCUTS VIEW -->
+                <div id="settings-shortcuts-view" class="settings-view" data-title="Shortcuts">
+                    <div class="settings-scroll-content">
+                        <div class="settings-category">Canvas</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">Undo / Redo</div>
+                                <div class="setting-desc">Ctrl+Z / Ctrl+Y</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Save Draft</div>
+                                <div class="setting-desc">Ctrl+S</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Delete Block(s)</div>
+                                <div class="setting-desc">Delete / Backspace</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Overview Mode</div>
+                                <div class="setting-desc">Double-click Block</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Duplicate Block</div>
+                                <div class="setting-desc">Alt + Drag Block</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Multi-Select</div>
+                                <div class="setting-desc">Ctrl + Click</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Quick Delete</div>
+                                <div class="setting-desc">Shift + Click</div>
+                            </div>
+                        </div>
+                        <div class="settings-category">Editor</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">Accept Completion</div>
+                                <div class="setting-desc">Tab / Enter</div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">Navigate Completion</div>
+                                <div class="setting-desc">Up / Down</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERFORMANCE VIEW -->
+                <div id="settings-performance-view" class="settings-view" data-title="Performance">
+                    <div class="settings-scroll-content">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; margin-top: 16px;">
+                            <span class="material-symbols-rounded"
+                                style="font-size: 64px; color: #007AFF; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">speed</span>
+                            <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">High Performance</h2>
+                            <p
+                                style="font-size: 0.95rem; color: var(--text-secondary); max-width: 80%; margin: 0; line-height: 1.5;">
+                                Optimize WinScript Builder for older devices or complex scripts.</p>
+                        </div>
+                        <div class="settings-group-header">Graphics & Motion</div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon" style="background: #007AFF;"><span
+                                            class="material-symbols-rounded">bolt</span></div>
+                                    <div class="setting-content">
+                                        <div class="setting-label">High Performance Mode</div>
+                                        <div class="setting-desc">Reduces visual effects for speed</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="perfModeToggle" onchange="togglePerformanceMode()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="padding: 0 16px;">
+                            <p
+                                style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.4;">
+                                Enabling this option disables blur effects, transparency, and complex animations. This
+                                can significantly improve responsiveness on older hardware or when working with large
+                                scripts.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABOUT VIEW -->
+                <div id="settings-about-view" class="settings-view" data-title="About App">
+                    <div class="settings-scroll-content" style="text-align: center;">
+                        <div style="margin-bottom: 20px; margin-top: 40px;">
+                            <span class="material-symbols-rounded"
+                                style="color: var(--accent-color); font-size: 64px; cursor: pointer; user-select: none; transition: transform 0.1s;"
+                                onclick="handleAboutIconClick(this)">terminal</span>
+                        </div>
+                        <h3 style="margin: 0; font-weight: 600; font-size: 1.5rem;">WinScript Builder</h3>
+                        <p style="color: var(--text-secondary); font-size: 1rem; margin-top: 8px;">The advanced visual
+                            editor for Batch & PowerShell.</p>
+                        <div style="margin-top:40px; font-size:0.85rem; color: var(--text-secondary);">
+                            Designed & Built by<br>
+                            <span style="color: var(--text-primary); font-weight: 500;">Jared Andre Carreon</span>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary); opacity: 0.7;">©
+                            <span id="yearSpan"></span> All Rights Reserved.</div>
+                    </div>
+                </div>
+
+                <!-- PRIVACY VIEW -->
+                <div id="settings-privacy-view" class="settings-view" data-title="Privacy Policy">
+                    <div class="settings-scroll-content">
+                        <div class="settings-group">
+                            <div
+                                style="padding: 20px; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                                <p style="margin-top: 0; font-weight: 500; color: var(--text-primary);">WinScript
+                                    Builder is a client-side application.</p>
+                                <ul style="padding-left: 20px; margin-bottom: 0; margin-top: 12px;">
+                                    <li>This app does not collect, store, or transmit any personal data.</li>
+                                    <li>No tracking cookies or analytics are used.</li>
+                                    <li>All your scripts and settings remain on your device.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -288,7 +1040,8 @@
     <div class="modal-overlay" id="errorModal">
         <div class="modal-box" style="text-align: center; width: 400px;">
             <div style="margin-bottom: 16px;">
-                <span class="material-symbols-rounded" style="color: var(--warning-color); font-size: 48px;">warning</span>
+                <span class="material-symbols-rounded"
+                    style="color: var(--warning-color); font-size: 48px;">warning</span>
             </div>
             <h3 style="margin-bottom: 10px; font-size: 1.2rem; font-weight: 600;">Validation Issues</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">
@@ -303,85 +1056,173 @@
 
     <!-- Welcome / Onboarding Modal -->
     <div class="modal-overlay" id="welcomeModal">
-        <div class="modal-box" style="width: 850px; max-width: 95vw;">
-            <div class="modal-header">
-                <div class="modal-title">Welcome to Batch Builder</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('welcomeModal')">close</span>
-            </div>
-            
+        <div class="modal-box welcome-box">
+
             <!-- Step 1: Intro -->
             <div id="welcome-step-1">
-                <div class="welcome-grid">
-                    <div class="welcome-step">
-                        <div class="step-icon"><span class="material-symbols-rounded">touch_app</span></div>
-                        <div class="step-title">1. Select</div>
-                        <div class="step-desc">Browse commands from the sidebar categories.</div>
+                <div class="welcome-hero">
+                    <span class="material-symbols-rounded hero-icon">terminal</span>
+                    <h1 class="welcome-title">Automate your desktop.</h1>
+                    <p class="welcome-subtitle">Build powerful Batch and PowerShell scripts without writing code.</p>
+                </div>
+
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #007AFF;">layers</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Visual Scripting</div>
+                            <div class="feature-desc">Drag and drop commands to build complex logic instantly.</div>
+                        </div>
                     </div>
-                    <div class="welcome-step">
-                        <div class="step-icon"><span class="material-symbols-rounded">drag_indicator</span></div>
-                        <div class="step-title">2. Drag</div>
-                        <div class="step-desc">Drag blocks onto the canvas to build your logic.</div>
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #34c759;">code</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Batch & PowerShell</div>
+                            <div class="feature-desc">Switch engines seamlessly to access the full power of Windows.
+                            </div>
+                        </div>
                     </div>
-                    <div class="welcome-step">
-                        <div class="step-icon"><span class="material-symbols-rounded">download</span></div>
-                        <div class="step-title">3. Export</div>
-                        <div class="step-desc">Download your finished script as a .BAT file.</div>
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #f59e0b;">verified</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Smart Validation</div>
+                            <div class="feature-desc">Real-time linting catches errors before you run your script.</div>
+                        </div>
                     </div>
+                </div>
+
+                <div class="welcome-footer">
+                    <button class="btn-action welcome-btn" onclick="goToWelcomeStep(2)">Continue</button>
                 </div>
             </div>
 
             <!-- Step 2: Configuration -->
             <div id="welcome-step-2" style="display: none;">
-                <p style="text-align: center; color: var(--text-secondary);">Choose your preferred sidebar layout.</p>
+                <div class="welcome-hero small">
+                    <h2 class="welcome-title">Make it yours.</h2>
+                    <p class="welcome-subtitle">Customize your workspace experience.</p>
+                </div>
+
                 <div class="mode-selection">
                     <div class="mode-card selected" id="card-normal" onclick="selectWelcomeMode('normal')">
-                        <div class="step-icon"><span class="material-symbols-rounded">view_list</span></div>
+                        <div class="mode-icon"><span class="material-symbols-rounded">view_list</span></div>
                         <div class="mode-title">Normal Mode</div>
                         <div class="mode-desc">Standard view with command descriptions. Best for beginners.</div>
                     </div>
                     <div class="mode-card" id="card-compact" onclick="selectWelcomeMode('compact')">
-                        <div class="step-icon"><span class="material-symbols-rounded">grid_view</span></div>
+                        <div class="mode-icon"><span class="material-symbols-rounded">grid_view</span></div>
                         <div class="mode-title">Compact Mode</div>
                         <div class="mode-desc">Dense view with icons only. Best for experienced users.</div>
                     </div>
                 </div>
+
+                <div class="config-row">
+                    <div class="config-info">
+                        <div class="config-title">Show Tooltips</div>
+                        <div class="config-desc">Display command details when hovering over the sidebar.</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="welcomeTooltipToggle" onchange="toggleSidebarTooltip(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="welcome-footer">
+                    <button class="btn-secondary-action welcome-btn-sec" onclick="goToWelcomeStep(1)">Back</button>
+                    <button class="btn-action welcome-btn" onclick="goToWelcomeStep(3)">Continue</button>
+                </div>
             </div>
 
-            <div class="modal-footer">
-                <button class="btn-secondary-action" id="welcomeBackBtn" onclick="prevWelcomeStep()" style="display: none;">Back</button>
-                <button class="btn-action" id="welcomeNextBtn" onclick="nextWelcomeStep()">Next</button>
+            <!-- Step 3: Project Setup -->
+            <div id="welcome-step-3" style="display: none;">
+                <div class="welcome-hero small">
+                    <h2 class="welcome-title">Ready to build?</h2>
+                    <p class="welcome-subtitle">Choose how you want to start your project.</p>
+                </div>
+
+                <div class="mode-selection">
+                    <div class="mode-card" onclick="finishWelcome(false)">
+                        <div class="mode-icon"><span class="material-symbols-rounded">check_box_outline_blank</span>
+                        </div>
+                        <div class="mode-title">Blank Canvas</div>
+                        <div class="mode-desc">Start from scratch with an empty workspace.</div>
+                    </div>
+                    <div class="mode-card" onclick="finishWelcome(true)">
+                        <div class="mode-icon"><span class="material-symbols-rounded">rocket_launch</span></div>
+                        <div class="mode-title">Load Sample</div>
+                        <div class="mode-desc">Start with a pre-built system maintenance script.</div>
+                    </div>
+                </div>
+
+                <div class="welcome-footer">
+                    <button class="btn-secondary-action welcome-btn-sec" onclick="goToWelcomeStep(2)">Back</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="aboutModal">
-        <div class="modal-box" style="text-align: center;">
-            <span class="material-symbols-rounded close-modal" style="float: right; cursor:pointer;" onclick="closeModal('aboutModal')">close</span>
-            <div style="margin-bottom: 20px; margin-top: 10px;">
-                <span class="material-symbols-rounded" style="color: var(--accent-color); font-size: 48px;">terminal</span>
-            </div>
-            <h3>Batch Builder</h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem;">The advanced visual batch script editor.</p>
-            <div style="margin-top:20px; font-size:0.8rem; color: var(--text-secondary);">Jared Andre Carreon © <span id="yearSpan"></span></div>
-        </div>
-    </div>
+    <!-- PowerShell Welcome Modal -->
+    <div class="modal-overlay" id="pshWelcomeModal">
+        <div class="modal-box welcome-box">
 
-    <div class="modal-overlay" id="privacyModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title">Privacy Policy</div>
-                <span class="material-symbols-rounded close-modal" style="cursor:pointer;" onclick="closeModal('privacyModal')">close</span>
+            <!-- Step 1: Intro -->
+            <div id="psh-welcome-step-1">
+                <div class="welcome-hero">
+                    <span class="material-symbols-rounded hero-icon" style="color: #0078D4;">code</span>
+                    <h1 class="welcome-title">PowerShell.</h1>
+                    <p class="welcome-subtitle">The modern standard for automation.</p>
+                </div>
+
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #0078D4;">data_object</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Object-Oriented</div>
+                            <div class="feature-desc">Pass actual objects between commands, not just text.</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #34c759;">terminal</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Powerful Scripting</div>
+                            <div class="feature-desc">Access the full .NET framework and system APIs.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="welcome-footer">
+                    <button class="btn-action welcome-btn" onclick="goToPshWelcomeStep(2)">Continue</button>
+                </div>
             </div>
-            <div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
-                <p>Batch Builder is a client-side application.</p>
-                <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 0;">
-                    <li>This app does not collect, store, or transmit any personal data.</li>
-                    <li>No tracking cookies or analytics are used.</li>
-                    <li>All your scripts and settings remain on your device.</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-action" onclick="closeModal('privacyModal')">Close</button>
+
+            <!-- Step 2: Features -->
+            <div id="psh-welcome-step-2" style="display: none;">
+                <div class="welcome-hero small">
+                    <h2 class="welcome-title">Built for Speed.</h2>
+                    <p class="welcome-subtitle">Advanced tools at your fingertips.</p>
+                </div>
+
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #FF9500;">verified</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Smart Linter</div>
+                            <div class="feature-desc">Real-time error checking ensures your scripts run smoothly.</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-symbols-rounded feature-icon" style="color: #5856D6;">keyboard</span>
+                        <div class="feature-text">
+                            <div class="feature-title">Intelligent Completion</div>
+                            <div class="feature-desc">Context-aware suggestions for commands and variables.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="welcome-footer">
+                    <button class="btn-secondary-action welcome-btn-sec" onclick="goToPshWelcomeStep(1)">Back</button>
+                    <button class="btn-action welcome-btn" onclick="finishPshWelcome()">Start Scripting</button>
+                </div>
             </div>
         </div>
     </div>
@@ -423,7 +1264,7 @@
             <button class="mobile-btn" onclick="saveDraft(); toggleMobileMenu()">
                 <span class="material-symbols-rounded">save</span> Save Draft
             </button>
-            <button class="mobile-btn" onclick="openModal('settingsModal'); toggleMobileMenu()">
+            <button class="mobile-btn" onclick="openSettingsTo('main'); toggleMobileMenu()">
                 <span class="material-symbols-rounded">settings</span> Settings
             </button>
             <button class="mobile-btn" onclick="copyToClipboard(); toggleMobileMenu()">
@@ -437,6 +1278,17 @@
 
     <script src="data.js"></script>
     <script src="linter.js"></script>
+    <script src="batch_completion.js"></script>
+    <script src="batch_engine.js"></script>
+    <script src="powershell_engine.js"></script>
+    <script src="ui.js"></script>
+    <script src="canvas.js"></script>
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
+
 </html>
